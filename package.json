@@ -7,7 +7,7 @@
   "license": "ISC",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js"
   },
   "engines": {
     "node": "6.14.5"
@@ -17,15 +17,17 @@
     "url": "git+https://github.com/mdjee805/rankedVoting.git"
   },
   "dependencies": {
+    "aws-sdk": "^2.749.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "debug": "~2.6.9",
+    "ejs": "^3.1.5",
     "express": "^4.17.1",
     "favicon": "0.0.2",
     "http": "0.0.1-security",
     "http-errors": "^1.8.0",
     "jade": "^1.11.0",
-    "mariadb": "^2.4.2",
+    "mariadb": "10.1.44",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "pug": "^3.0.0",
