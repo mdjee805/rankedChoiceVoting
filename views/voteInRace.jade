@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  p(style='margin-top: 20px; font-size: 32px;') Rank the following items below (1 is first choice)
+  form(action='/sendVote/'+items[0].raceID method='post' style='background-color:#380900; padding:30px;')
+    p(style='margin-top: 20px; font-size: 32px;') Prioritize the below items (1 is 1st)
+    - let i = 0;
+    - for (i; i < items.length; ++i)
+      - let priority = "priority" + i;
+      p
+        label=items[i].name
+        input(type='text' id=priority name=priority style='margin-left: 20%')
+      if(i == items.length - 1)
+        p
+          input(class='button' type='submit' value='Submit' onclick="alert('Submitted. Redirecting...')")

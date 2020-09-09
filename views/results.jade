@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  p(style='margin-top: 20px; font-size: 32px;') Results
+  table
+    tr
+      th Title
+      th Final Votes
+    each item in allVotes
+      tr
+        td=item.name
+        td=item.vote
+  div(style="background-color:#fec445; width:40%; margin:auto;")
+    p(style="font-weight:bold; font-size:36px; color:#6E0DD0;")="Winner: " + winner.name

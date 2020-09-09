@@ -1,16 +1,35 @@
 {
-  "name": "rankedchoicevoting",
-  "version": "0.0.0",
+  "name": "ranked-voting",
+  "version": "1.0.0",
+  "description": "creates and hosts a server and database for a web-app for users to conduct ranked voting - the best voting",
+  "main": "app.js",
+  "author": "Michael Jee",
+  "license": "ISC",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
   },
+  "engines": {
+    "node": "6.14.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdjee805/rankedVoting.git"
+  },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
     "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.1"
+    "express": "^4.17.1",
+    "favicon": "0.0.2",
+    "http": "0.0.1-security",
+    "http-errors": "^1.8.0",
+    "jade": "^1.11.0",
+    "mariadb": "^2.4.2",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7",
+    "pug": "^3.0.0",
+    "static": "^2.0.0",
+    "static-favicon": "^2.0.0-alpha"
   }
 }

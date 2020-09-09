@@ -1,5 +1,12 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  p
+    button(type='button')
+      a(href='/createRace') Create New Race
+  p
+    button(type='button')
+      a(href='/selectRace') Vote in a Race
+  p
+    button(type='button')
+      a(href='/selectRaceResults') Race Results

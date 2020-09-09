@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  p(style='margin-top: 20px; font-size: 32px;') Select one of the available races below
+  table
+    thead
+      tr
+        th Race ID
+        th(colspan="10") Titles
+    tbody    
+      - for (i = 0; i < races.length; ++i)
+        tr
+          td(style="text-decoration:none;")
+            - var link = "/voteInRace/" + races[i][0];
+            a(href=link)=races[i][0]
+          - for (j = 1; j < races[i].length; ++j)
+            td=races[i][j]
