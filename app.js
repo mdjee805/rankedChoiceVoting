@@ -19,13 +19,20 @@ var app = express();
 
 const hostname = '127.0.0.1';
 const port = 8080;
-const pool = maria.createPool ({
-  host: '127.0.0.1',
+/*const pool = maria.createPool ({
+  host: process.env.RDS_HOSTNAME,
   user: 'newuser',
   password: 'newpassword',
   database: 'ranked',
   connectionLimit: 5,
   port:3306
+});*/
+
+const pool = maria.createPool ({
+  host     : process.env.RDS_HOSTNAME,
+  user     : process.env.RDS_USERNAME,
+  password : process.env.RDS_PASSWORD,
+  port     : process.env.RDS_PORT
 });
 
 // view engine setup
