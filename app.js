@@ -5,7 +5,8 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var maria = require('mariadb');
+//var maria = require('mariadb');
+var mysql = require('mysql');
 
 var indexRouter = require('./routes/index');
 var createRaceRouter = require('./routes/createRace');
@@ -19,14 +20,32 @@ var app = express();
 
 const hostname = '127.0.0.1';
 const port = 8080;
-const pool = maria.createPool ({
+/*const pool = maria.createPool ({
   host: '127.0.0.1',
   user: 'newuser',
   password: 'newpassword',
   database: 'ranked',
   connectionLimit: 5,
   port:3306
+});*/
+var pool = mysql.createConnection({
+  host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
+  user     : 'newuser',
+  password : 'newpassword',
+  database : 'ranked',
+  port     : 3306
 });
+
+connection.connect(function(err) {
+  if (err) {
+    console.error('Database connection failed: ' + err.stack);
+    return;
+  }
+
+  console.log('Connected to database.');
+});
+
+connection.end();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
