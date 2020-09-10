@@ -41,7 +41,7 @@ pool.connect((err) => {
     return;
   }
   console.log('Connection established');
-  console.log(pool.query("select * from items"));
+  //console.log(pool.query("select * from items"));
 });
 
 pool.end((err) => { });
