@@ -6,7 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var maria = require('mariadb');
-var mysql = require('mysql');
+//var mysql = require('mysql');
 
 var indexRouter = require('./routes/index');
 var createRaceRouter = require('./routes/createRace');
