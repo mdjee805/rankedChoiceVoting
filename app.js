@@ -18,8 +18,8 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-/*var hostname = '127.0.0.1';
-var port = 8080;*/
+var hostname = '127.0.0.1';
+var port = 8080;
 /*const pool = maria.createPool ({
   host: 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
   user: 'newuser',
@@ -43,13 +43,14 @@ pool.connect((err) => {
     return;
   }
   console.log('Connection established');
+  console.log(pool.query("select * from items"));
 });
 
 pool.end((err) => { });
 
-/*app.listen(port, hostname, () => {
+app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
-});*/
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -118,8 +119,8 @@ app.post('/newRace', async(req, res) => {
   
   let conn;
   try {
-    //conn = await pool.getConnection();
-    conn = await pool.connect();
+    conn = await pool.getConnection();
+    //conn = await pool.connect();
     await conn.query('INSERT INTO races() VALUES ();');
     raceID = await conn.query('SELECT MAX(raceID) AS raceID from races;');
     SQLpeople = await 'INSERT INTO people (raceID) VALUES ("' + raceID[0].raceID + '");';
