@@ -5,8 +5,8 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var maria = require('mariadb');
-//var mysql = require('mysql');
+//var maria = require('mariadb');
+var mysql = require('mysql');
 
 var indexRouter = require('./routes/index');
 var createRaceRouter = require('./routes/createRace');
@@ -20,17 +20,17 @@ var app = express();
 
 /*var hostname = '127.0.0.1';
 var port = 8080;*/
-const pool = maria.createPool ({
+/*const pool = maria.createPool ({
   host: 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
   user: 'newuser',
   password: 'newpassword',
   database: 'ranked',
   connectionLimit: 5,
   port:3306
-});
-/*const pool = mysql.createConnection({
-  //host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
-  host     : '127.0.0.1',
+});*/
+var pool = mysql.createConnection({
+  host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
+  //host     : '127.0.0.1',
   user     : 'newuser',
   password : 'newpassword',
   database : 'ranked',
@@ -45,7 +45,7 @@ pool.connect((err) => {
   console.log('Connection established');
 });
 
-pool.end((err) => { });*/
+pool.end((err) => { });
 
 /*app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
