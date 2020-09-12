@@ -5,7 +5,6 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-//var maria = require('mariadb');
 var mysql = require('mysql');
 
 var indexRouter = require('./routes/index');
@@ -18,7 +17,7 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-/*const pool = maria.createPool ({
+/*const pool = maria.createPool ({ //mariadb
   host: 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
   user: 'newuser',
   password: 'newpassword',
@@ -26,31 +25,28 @@ var app = express();
   connectionLimit: 5,
   port:3306
 });*/
-var pool = mysql.createConnection({
-  host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
-  //host     : '127.0.0.1',
+
+/*var hostname = '127.0.0.1'; //local hosting
+var port = 8080;
+app.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});*/
+
+var conn = mysql.createConnection({
+  host     : 'aa3j66b9qlocdo.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
   user     : 'newuser',
   password : 'newpassword',
   database : 'ranked',
   port     : 3306
 });
 
-pool.connect((err) => {
-  if(err){
-    console.log('Error connecting to Db');
+conn.connect(function(err) {
+  if (err) {
+    console.error('Database connection failed: ' + err.stack);
     return;
   }
-  console.log('Connection established');
-  //console.log(pool.query("select * from items"));
+  console.log('Connected to database.');
 });
-
-pool.end((err) => { });
-
-/*var hostname = '127.0.0.1';
-var port = 8080;
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});*/
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -117,10 +113,8 @@ app.post('/newRace', async(req, res) => {
   if(req.body.rank10 != null)
     rank[9] = req.body.rank10;
   
-  let conn;
   try {
-    conn = await pool.getConnection();
-    //conn = await pool.connect();
+
     await conn.query('INSERT INTO races() VALUES ();');
     raceID = await conn.query('SELECT MAX(raceID) AS raceID from races;');
     SQLpeople = await 'INSERT INTO people (raceID) VALUES ("' + raceID[0].raceID + '");';
