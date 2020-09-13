@@ -12,6 +12,6 @@ block content
         tr
           td(style="text-decoration:none;")
             - var link = "/results/" + races[i][0];
-            a(href=link)=races[i][0]
+            a(href=link)='Select Race #' + races[i][0]
           - for (j = 1; j < races[i].length; ++j)
             td=races[i][j]
