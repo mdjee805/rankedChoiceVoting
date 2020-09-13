@@ -28,7 +28,7 @@ INSERT INTO races() VALUES ();
 INSERT INTO people (raceID) VALUES ('1'), ('1'), ('1'), ('1');
 
 INSERT INTO items (peopleID, name, priority)
-  VALUES (1, 'yugioh', 1), (1, 'digimon', 2), (1, 'boku no pico', 3),
-  (2, 'yugioh', 2), (2, 'digimon', 3), (2, 'boku no pico', 1),
-  (3, 'yugioh', 3), (3, 'digimon', 2), (3, 'boku no pico', 1),
-  (4, 'yugioh', 2), (4, 'digimon', 1), (4, 'boku no pico', 3);
+  VALUES (1, 'yugioh', 1), (1, 'digimon', 2), (1, 'pokemon', 3),
+  (2, 'yugioh', 2), (2, 'digimon', 3), (2, 'pokemon', 1),
+  (3, 'yugioh', 3), (3, 'digimon', 2), (3, 'pokemon', 1),
+  (4, 'yugioh', 2), (4, 'digimon', 1), (4, 'pokemon', 3);

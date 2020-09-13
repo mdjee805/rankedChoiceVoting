@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  p(style='margin-top: 20px; font-size: 32px;') Results
+  h2(style='margin-top: 20px; font-size: 32px;') Results
   table
     tr
       th Title
@@ -10,5 +10,5 @@ block content
       tr
         td=item.name
         td=item.vote
-  div(style="background-color:#fec445; width:40%; margin:auto;")
-    p(style="font-weight:bold; font-size:36px; color:#6E0DD0;")="Winner: " + winner.name
+  div(style="background-color:#5cb1f0; width:30%; margin:1% auto auto auto;")
+    p(style="font-weight:bold; font-size:24px;")="Winner: " + winner.name

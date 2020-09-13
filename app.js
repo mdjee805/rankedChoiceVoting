@@ -13,39 +13,13 @@ var selectRaceRouter = require('./routes/selectRace');
 var voteInRaceRouter = require('./routes/voteInRace');
 var selectRaceResultsRouter = require('./routes/selectRaceResults');
 var resultsRouter = require('./routes/results');
-var usersRouter = require('./routes/users');
 
 var app = express();
 
-/*const pool = maria.createPool ({ //mariadb
-  host: 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
-  user: 'newuser',
-  password: 'newpassword',
-  database: 'ranked',
-  connectionLimit: 5,
-  port:3306
-});*/
-
-/*var hostname = '127.0.0.1'; //local hosting
+var hostname = '127.0.0.1'; //local hosting
 var port = 8080;
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
-});*/
-
-var conn = mysql.createConnection({
-  host     : 'aa3j66b9qlocdo.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
-  user     : 'newuser',
-  password : 'newpassword',
-  database : 'ranked',
-  port     : 3306
-});
-
-conn.connect(function(err) {
-  if (err) {
-    console.error('Database connection failed: ' + err.stack);
-    return;
-  }
-  console.log('Connected to database.');
 });
 
 // view engine setup
@@ -67,7 +41,6 @@ app.get('/selectRace', selectRaceRouter);
 app.get('/voteInRace/*', voteInRaceRouter);
 app.get('/selectRaceResults', selectRaceResultsRouter);
 app.get('/results/*', resultsRouter);
-app.use('/users', usersRouter);
 
 app.post('/newRace', async(req, res) => {
   var name = [];
@@ -114,32 +87,62 @@ app.post('/newRace', async(req, res) => {
     rank[9] = req.body.rank10;
   
   try {
+    var pool = await mysql.createPool({
+      //host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
+      host : '127.0.0.1',
+      user     : 'newuser',
+      password : 'newpassword',
+      database : 'ranked',
+      port     : 3306
+    });
 
-    await conn.query('INSERT INTO races() VALUES ();');
-    raceID = await conn.query('SELECT MAX(raceID) AS raceID from races;');
-    SQLpeople = await 'INSERT INTO people (raceID) VALUES ("' + raceID[0].raceID + '");';
-    await conn.query(SQLpeople);
-    peopleID = await conn.query('SELECT MAX(peopleID) as peopleID from people;');
-    SQLitems = await "INSERT INTO items (peopleID, name, priority) VALUES";
-    for(i = 0; i < 10 && name[i] != '' && rank[i] != ''; ++i) {
-      SQLitems += " (" + peopleID[0].peopleID + ", '" + name[i] + "', " + rank[i] + ")";
-      if(i == 9)
-        SQLitems += ";";
-      else {
-        if(name[i + 1] != '' && rank[i + 1] != '')
-          SQLitems += ",";
-        else
-          SQLitems += ";";
+    await pool.getConnection(async(err, conn) => {
+      if (err) {
+        console.error('Database connection failed: ' + err.stack);
+        return;
       }
-    }
-    await conn.query(SQLitems);
+
+      conn.query('INSERT INTO races() VALUES ();', (err, results) => {
+        if(err) throw err;
+
+        conn.query('SELECT MAX(raceID) AS raceID from races;', (err, results) => {
+          if(err) throw err;
+          raceID = results;
+
+          SQLpeople = 'INSERT INTO people (raceID) VALUES ("' + raceID[0].raceID + '");';
+          conn.query(SQLpeople, (err, results) => {
+            if(err) throw err;
+
+            conn.query('SELECT MAX(peopleID) as peopleID from people;', (err, results) => {
+              if(err) throw err;
+              peopleID = results;
+
+              SQLitems = 'INSERT INTO items (peopleID, name, priority) VALUES';
+              for(i = 0; i < 10 && name[i] != '' && rank[i] != ''; ++i) {
+                SQLitems += " (" + peopleID[0].peopleID + ", '" + name[i] + "', " + rank[i] + ")";
+                if(i == 9)
+                  SQLitems += ";";
+                else {
+                  if(name[i + 1] != '' && rank[i + 1] != '')
+                    SQLitems += ",";
+                else
+                  SQLitems += ";";
+                }
+              }
+
+              conn.query(SQLitems, (err, results) => {
+                if(err) throw err;
+                pool.end();
+                res.render('index');
+              });
+            });  
+          });
+        });
+      });
+    });
   }
   catch {
     createError(404);
-  }
-  finally {
-    conn.end();
-    res.render('index');
   }
 });
 
@@ -167,32 +170,51 @@ app.post('/sendVote/*', async(req, res) => {
   if(req.body.priority9 != null)
     rank[9] = req.body.priority9;
   
-  let conn;
   try {
-    conn = await pool.getConnection();
-    SQLnames = await "SELECT DISTINCT i.name AS name FROM races r INNER JOIN people p ON p.raceID = r.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE r.raceID = " + raceID + ";";
-    names = await conn.query(SQLnames);
-    SQLpeople = await 'INSERT INTO people (raceID) VALUES ("' + raceID + '");';
-    await conn.query(SQLpeople);
-    peopleID = await conn.query('SELECT MAX(peopleID) as peopleID from people;');
-    SQLitems = await "INSERT INTO items (peopleID, name, priority) VALUES";
+    var pool = await mysql.createPool({
+      //host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
+      host : '127.0.0.1',
+      user     : 'newuser',
+      password : 'newpassword',
+      database : 'ranked',
+      port     : 3306
+    });
 
-    for(i = 0; i < names.length && names[i].name != '' && rank[i] != ''; ++i) {
-      SQLitems += " (" + peopleID[0].peopleID + ", '" + names[i].name + "', " + rank[i] + ")";
-      if(i < names.length - 1)
-          SQLitems += ",";
-      else
-        SQLitems += ";";
-    }
-    console.log(SQLitems);
-    await conn.query(SQLitems);
+    await pool.getConnection(async(err, conn) => {
+      if (err) {
+        console.error('Database connection failed: ' + err.stack);
+        return;
+      }
+      SQLnames = "SELECT DISTINCT i.name AS name FROM races r INNER JOIN people p ON p.raceID = r.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE r.raceID = " + raceID + ";";
+      conn.query(SQLnames, (err, results) => {
+        if(err) throw err;
+        names = results;
+        SQLpeople = 'INSERT INTO people (raceID) VALUES ("' + raceID + '");'
+        conn.query(SQLpeople, (err, results) => {
+          if(err) throw err;
+          conn.query('SELECT MAX(peopleID) as peopleID from people;', (err, results) => {
+            if(err) throw err;
+            peopleID = results;
+            SQLitems = "INSERT INTO items (peopleID, name, priority) VALUES";
+            for(i = 0; i < names.length && names[i].name != '' && rank[i] != ''; ++i) {
+              SQLitems += " (" + peopleID[0].peopleID + ", '" + names[i].name + "', " + rank[i] + ")";
+              if(i < names.length - 1)
+                SQLitems += ",";
+              else
+                SQLitems += ";";
+            }
+            conn.query(SQLitems, (err, results) => {
+              if(err) throw err;
+              pool.end();
+              res.render('index');
+            });
+          });
+        });
+      });
+    });
   }
   catch {
     createError(404);
-  }
-  finally {
-    conn.end();
-    res.render('index');
   }
 });
 

@@ -3,16 +3,16 @@ extends layout
 block content
     - let MAX = 10;
     - let i = 1;
-    form(action='/newRace' method='post' style='background-color:#380900; padding:30px;')
-      p(style='margin-top: 20px; font-size: 32px;') Enter up to 10 things being voted on below
+    form(action='/newRace' method='post' style='background-color:#e3effc; padding:10px; width:80%; margin:auto;')
+      h2 Enter up to 10 things being voted on below
       - for (i; i <= MAX; i++)
         - let name = 'name' + i;
         - let rank = 'rank' + i;
         p
-          label='Name ' + i + ':'
-          input(type='text' id=name name=name style='margin: 0 10% 0 10%')
-          label='Priority ' + i + ':'
-          input(type='text' id=rank name=rank style='margin: 0 10% 0 10%')
+          label='Name ' + i
+          input(type='text' id=name name=name style='margin: 0 0 0 .5%;')
+          label(style='margin: 0 0 0 10%;')='Priority ' + i
+          input(type='text' id=rank name=rank style='margin: 0 0 0 .5%;')
       br
       p
         input(class='button' type='submit' value='Submit' onclick="alert('Submitted. Redirecting...')")

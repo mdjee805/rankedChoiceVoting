@@ -1,15 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var maria = require('mariadb');
-
-const pool = maria.createPool ({
-  host: '127.0.0.1',
-  user: 'newuser',
-  password: 'newpassword',
-  database: 'ranked',
-  connectionLimit: 5,
-  port:3306
-});
+var mysql = require('mysql');
 
 class item {
   name = "";
@@ -22,45 +13,73 @@ router.get('/results/*', async(req, res, next) => {
   let SQLquery = "SELECT p.peopleID, i.name, i.priority FROM races r INNER JOIN people p ON r.raceID = p.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE r.raceID = " + raceID;
   let SQLquery2 = "SELECT MIN(peopleID) AS peopleID FROM people p INNER JOIN races r ON p.raceID = r.raceID WHERE r.raceID = " + raceID;
 
-  let conn;
   try {
-    conn = await pool.getConnection();
-    SQLitems = await conn.query(SQLquery);
-    let peopleID = await conn.query(SQLquery2);
-    let SQLquery3 = await "SELECT Count(i.name) AS 'index' FROM races r INNER JOIN people p ON r.raceID = p.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE r.raceID = " + raceID + " AND p.peopleID = " + peopleID[0].peopleID;
-    let SQLquery4 = await "SELECT i.name FROM races r INNER JOIN people p ON r.raceID = p.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE (r.raceID = " + raceID + " AND p.peopleID = " + peopleID[0].peopleID + ");";
-    let SQLindex = await conn.query(SQLquery3);
-    let names = await conn.query(SQLquery4);
+    var pool = await mysql.createPool({
+      //host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
+      host : '127.0.0.1',
+      user     : 'newuser',
+      password : 'newpassword',
+      database : 'ranked',
+      port     : 3306
+    });
+
+    await pool.getConnection(function(err, conn) {
+      if (err) {
+        console.error('Database connection failed: ' + err.stack);
+        return;
+      }
+
+      conn.query(SQLquery, (err, results) => {
+        if(err) throw err;
+        SQLitems = results;
+
+        conn.query(SQLquery2, (err, results) => {
+          if(err) throw err;
+          peopleID = results;
+
+          let SQLquery3 = "SELECT Count(i.name) AS 'index' FROM races r INNER JOIN people p ON r.raceID = p.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE r.raceID = " + raceID + " AND p.peopleID = " + peopleID[0].peopleID;
+          let SQLquery4 = "SELECT i.name FROM races r INNER JOIN people p ON r.raceID = p.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE (r.raceID = " + raceID + " AND p.peopleID = " + peopleID[0].peopleID + ");";
+
+          conn.query(SQLquery3, (err, results) => {
+            if(err) throw err;
+            SQLindex = results;
+
+            conn.query(SQLquery4, (err, results) => {
+              if(err) throw err;
+              names = results;
     
-    var maxi = new item();
-    var items;
-    do {
-      items = new Array(SQLindex[0].index);
-      for(let i = 0; i < items.length; ++i) {
-        items[i] = new item();
-        items[i].name = names[i].name;
-      }
+              var maxi = new item();
+              var items;
+              do {
+                items = new Array(SQLindex[0].index);
+                for(let i = 0; i < items.length; ++i) {
+                  items[i] = new item();
+                  items[i].name = names[i].name;
+                }
       
-      processVoting(SQLitems, items);
-      declareWinner(maxi, items);
+                processVoting(SQLitems, items);
+                declareWinner(maxi, items);
 
-      if(isTie(items)) {
-        maxi.name = "TIE";
-        maxi.vote = 1;
-      }
+                if(isTie(items)) {
+                  maxi.name = "TIE";
+                  maxi.vote = 1;
+                }
 
-      if(maxi.vote == 0) {
-        cullItems(items, SQLitems);
-      }
+                if(maxi.vote == 0) {
+                  cullItems(items, SQLitems);
+                }
 
-    }while(maxi.vote == 0);
+              }while(maxi.vote == 0);
+              pool.end();
+              res.render('results', {allVotes: items, winner: maxi} );
+            });
+          });
+        });
+      });
+    });
   }
   catch {
     res.render('error');
-  }
-  finally {
-    conn.end();
-    res.render('results', {allVotes: items, winner: maxi} );
   }
 });
 

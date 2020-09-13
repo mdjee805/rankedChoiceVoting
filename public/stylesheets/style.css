@@ -1,15 +1,15 @@
 div {
   border: 2px;
   border-style: solid;
-  border-color: #222222;
-  background-color: #333333;
+  border-color: #a7cff7;
+  background-color: #a7cff7;
   text-align: center;
 }
 
 body {
-  background-color: #003300;
+  background-color: white;
   text-align: center;
-  color: #dddddd;
+  color: black;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -18,9 +18,9 @@ h1 {
 }
 
 button {
-  background-color: #B8860B; /* Green */
+  background-color: #c6dffa; /* Green */
   border: none;
-  color: white;
+  color: black;
   padding: 30px 80px;
   text-align: center;
   text-decoration: none;
@@ -30,9 +30,9 @@ button {
 }
 
 .button {
-  background-color: #B8860B; /* Green */
+  background-color: #c6dffa; /* Green */
   border: none;
-  color: white;
+  color: black;
   padding: 30px 80px;
   text-align: center;
   text-decoration: none;
@@ -44,24 +44,24 @@ button {
 a {
   color: blue;
   text-decoration:none;
+  font-weight:bold;
+  font-style:italic;
 }
 
 table {
-  background-color:#222;
-  border:2px solid black;
-  color:black;
+  background-color: white;
+  border:1px solid lightgray;
   width:80%;
   margin:auto;
 }
 
 th, td, tr {
-  background-color:#DCDCDC;
-  border:1px solid black;
-  height:60px;
-  font-size:24px;
+  background-color:#e3effc;
+  height:40px;
+  font-size:16px;
 }
 
 th {
-  background-color:#bbb;
-  font-weight:bold; 
+  background-color:#c6dffa;
+  font-weight:bold;
 }

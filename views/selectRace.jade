@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  p(style='margin-top: 20px; font-size: 32px;') Select one of the available races below
+  h2(style='margin-top: 20px;') Select one of the available races below
   table
     thead
       tr
@@ -12,6 +12,6 @@ block content
         tr
           td(style="text-decoration:none;")
             - var link = "/voteInRace/" + races[i][0];
-            a(href=link)=races[i][0]
+            a(href=link style='font-size:20px;')=races[i][0]
           - for (j = 1; j < races[i].length; ++j)
             td=races[i][j]
