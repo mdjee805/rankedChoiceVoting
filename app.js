@@ -13,14 +13,16 @@ var selectRaceRouter = require('./routes/selectRace');
 var voteInRaceRouter = require('./routes/voteInRace');
 var selectRaceResultsRouter = require('./routes/selectRaceResults');
 var resultsRouter = require('./routes/results');
+var usersRouter = require('./routes/users');
 
 var app = express();
 
-var hostname = '127.0.0.1'; //local hosting
+/*//local hosting
+var hostname = '127.0.0.1';
 var port = 8080;
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
-});
+});*/
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,10 +43,13 @@ app.get('/selectRace', selectRaceRouter);
 app.get('/voteInRace/*', voteInRaceRouter);
 app.get('/selectRaceResults', selectRaceResultsRouter);
 app.get('/results/*', resultsRouter);
+app.use('/users', usersRouter);
 
+//user submits the form to make a new race
 app.post('/newRace', async(req, res) => {
   var name = [];
   var rank = [];
+  //gather form info
   if(req.body.name1 != null)
     name[0] = req.body.name1;
   if(req.body.rank1 != null)
@@ -87,36 +92,42 @@ app.post('/newRace', async(req, res) => {
     rank[9] = req.body.rank10;
   
   try {
+    //establish pool to database
     var pool = await mysql.createPool({
-      //host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
-      host : '127.0.0.1',
+      host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
       user     : 'newuser',
       password : 'newpassword',
       database : 'ranked',
       port     : 3306
     });
 
+    //connect to database
     await pool.getConnection(async(err, conn) => {
       if (err) {
         console.error('Database connection failed: ' + err.stack);
         return;
       }
 
+      //insert a new raceID
       conn.query('INSERT INTO races() VALUES ();', (err, results) => {
         if(err) throw err;
 
+        //get the new raceID
         conn.query('SELECT MAX(raceID) AS raceID from races;', (err, results) => {
           if(err) throw err;
           raceID = results;
 
+          //insert a new peopleID
           SQLpeople = 'INSERT INTO people (raceID) VALUES ("' + raceID[0].raceID + '");';
           conn.query(SQLpeople, (err, results) => {
             if(err) throw err;
 
+            //get the new peopleID
             conn.query('SELECT MAX(peopleID) as peopleID from people;', (err, results) => {
               if(err) throw err;
               peopleID = results;
 
+              //add the user's form info into the new race SQL statement
               SQLitems = 'INSERT INTO items (peopleID, name, priority) VALUES';
               for(i = 0; i < 10 && name[i] != '' && rank[i] != ''; ++i) {
                 SQLitems += " (" + peopleID[0].peopleID + ", '" + name[i] + "', " + rank[i] + ")";
@@ -130,10 +141,11 @@ app.post('/newRace', async(req, res) => {
                 }
               }
 
+              //insert the SQL statement
               conn.query(SQLitems, (err, results) => {
                 if(err) throw err;
-                pool.end();
-                res.render('index');
+                pool.end(); //close connection
+                res.render('index'); //redirect to index
               });
             });  
           });
@@ -146,9 +158,12 @@ app.post('/newRace', async(req, res) => {
   }
 });
 
+
+//user votes on existing race
 app.post('/sendVote/*', async(req, res) => {
-  raceID = (req.url).split('/')[2];
+  raceID = (req.url).split('/')[2]; //get raceID
   var rank = [];
+  //get votes
   if(req.body.priority0 != null)
     rank[0] = req.body.priority0;
   if(req.body.priority1 != null)
@@ -171,30 +186,39 @@ app.post('/sendVote/*', async(req, res) => {
     rank[9] = req.body.priority9;
   
   try {
+    //establish pool
     var pool = await mysql.createPool({
-      //host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
-      host : '127.0.0.1',
+      host     : 'aavxjie8w3ouxn.c1c99xe1e5l7.us-west-1.rds.amazonaws.com',
       user     : 'newuser',
       password : 'newpassword',
       database : 'ranked',
       port     : 3306
     });
 
+    //connect to database
     await pool.getConnection(async(err, conn) => {
       if (err) {
         console.error('Database connection failed: ' + err.stack);
         return;
       }
+
+      //find names of items in the chosen race
       SQLnames = "SELECT DISTINCT i.name AS name FROM races r INNER JOIN people p ON p.raceID = r.raceID INNER JOIN items i ON p.peopleID = i.peopleID WHERE r.raceID = " + raceID + ";";
       conn.query(SQLnames, (err, results) => {
         if(err) throw err;
         names = results;
+
+        //add a new peopleID to the race
         SQLpeople = 'INSERT INTO people (raceID) VALUES ("' + raceID + '");'
         conn.query(SQLpeople, (err, results) => {
           if(err) throw err;
+          
+          //use the new peopleID
           conn.query('SELECT MAX(peopleID) as peopleID from people;', (err, results) => {
             if(err) throw err;
             peopleID = results;
+
+            //use the peopleID, item names, and priorities to insert into the items table - ie vote
             SQLitems = "INSERT INTO items (peopleID, name, priority) VALUES";
             for(i = 0; i < names.length && names[i].name != '' && rank[i] != ''; ++i) {
               SQLitems += " (" + peopleID[0].peopleID + ", '" + names[i].name + "', " + rank[i] + ")";
@@ -205,8 +229,8 @@ app.post('/sendVote/*', async(req, res) => {
             }
             conn.query(SQLitems, (err, results) => {
               if(err) throw err;
-              pool.end();
-              res.render('index');
+              pool.end(); //close pool
+              res.render('index'); //redirect to index
             });
           });
         });
