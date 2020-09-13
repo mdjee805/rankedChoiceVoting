@@ -17,12 +17,12 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-//local hosting
+/*//local hosting
 var hostname = '127.0.0.1';
 var port = 8080;
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
-});
+});*/
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
