@@ -25,8 +25,8 @@ button {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 24px;
-  margin-top: 20px;
+  font-size: 20px;
+  margin-top: 1%;
 }
 
 .button {
@@ -37,8 +37,8 @@ button {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 24px;
-  margin-top: 20px;
+  font-size: 20px;
+  margin-top: 1%;
 }
 
 a {
